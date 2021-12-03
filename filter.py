@@ -9,7 +9,7 @@ def extractAudio(videoName):
     fileName,fileExt = os.path.splitext(os.path.basename(videoName))
     command = f"ffmpeg -i {videoName} -ab 128k -ac 1 -ar 16000 -vn -y {fileName}.wav"
     try:
-        subprocess.call(command, shell=True)
+        subprocess.call(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return f"{fileName}.wav"
     except Exception as e:
         print("Error: "+str(e))
@@ -44,20 +44,20 @@ def movAvgFilter(fs,audioData):
 
 def bandPassFiltering():
     command = 'ffmpeg -i avgFiltered.wav -af "highpass=f=300, lowpass=f=3000" -y bandFiltered.wav'
-    subprocess.call(command, shell=True)
+    subprocess.call(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     os.remove("avgFiltered.wav")
     
 def removeStaticNoise():
     command = 'sox bandFiltered.wav -n noiseprof noise.prof'
-    subprocess.call(command, shell=True)
+    subprocess.call(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     command = 'sox bandFiltered.wav noiseLess.wav noisered noise.prof 0.19'
-    subprocess.call(command, shell=True)
+    subprocess.call(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     os.remove("bandFiltered.wav")
     os.remove("noise.prof")
     
 def amplifyAudio(audioName):
     command = f'ffmpeg -i noiseLess.wav -filter:a "volume=2" -y {audioName}'
-    subprocess.call(command, shell=True)
+    subprocess.call(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     os.remove("noiseLess.wav")
     
 def preProcess(audioName):
