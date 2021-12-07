@@ -5,12 +5,10 @@ import math
 import contextlib
 import os
 
-def extractAudio(videoName):
-    fileName,fileExt = os.path.splitext(os.path.basename(videoName))
-    command = f"ffmpeg -i {videoName} -ab 128k -ac 1 -ar 16000 -vn -y {fileName}.wav"
+def extractAudio(videoPath,audioPath):
+    command = f"ffmpeg -i '{videoPath}' -ab 128k -ac 1 -ar 16000 -vn -y '{audioPath}'"
     try:
         subprocess.call(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        return f"{fileName}.wav"
     except Exception as e:
         print("Error: "+str(e))
         exit(1)
