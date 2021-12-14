@@ -38,14 +38,12 @@ for filename in audiofiles:
 audiofiles = audiofiles_
 del(audiofiles_)
 
-print(f"Number of audio segments: {len(audiofiles)}")
-
 decipher.isModelPresent()
 
 #Transcribing
 print("Transcribing the audio...")
 
-subtitle = open("subtitle.txt","a")
+subtitle = open(f"{video_file_name}.srt","a")
 
 for i,file in enumerate(audiofiles):
     file = os.path.join(audio_directory,file)
