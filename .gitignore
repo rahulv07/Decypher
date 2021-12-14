@@ -1,3 +1,6 @@
 /audio/
 /output/
 /__pycache__/
+/vosk-api/
+/model/
+/subtitle.txt

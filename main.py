@@ -2,6 +2,9 @@ import filter
 import argparse
 import os
 import split
+import decipher
+import datetime
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("path",help = "Enter the video file path")
@@ -35,3 +38,22 @@ for filename in audiofiles:
 audiofiles = audiofiles_
 del(audiofiles_)
 
+print(f"Number of audio segments: {len(audiofiles)}")
+
+decipher.isModelPresent()
+
+#Transcribing
+print("Transcribing the audio...")
+
+subtitle = open("subtitle.txt","a")
+
+for i,file in enumerate(audiofiles):
+    file = os.path.join(audio_directory,file)
+    interval = file.split(os.sep)[-1][:-4].split("_")[-1].split("-")
+    fromTime = decipher.get_timestamp_string(datetime.timedelta(seconds=float(interval[0])))
+    toTime = decipher.get_timestamp_string(datetime.timedelta(seconds=float(interval[1])))
+    subtitle.write(str(i+1)+"\n")
+    subtitle.write(fromTime+" --> "+toTime+"\n")
+    subtitle.write(decipher.transcribe(file)+"\n\n")
+
+subtitle.close()

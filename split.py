@@ -32,7 +32,23 @@ def read_audio_file(input_file):
     return sampling_rate, signal
 
 
-def silence_removal(signal, sampling_rate, st_win, st_step,weight=0.5):
+
+def smooth_moving_avg(signal, window=11):
+    window = int(window)
+    if signal.ndim != 1:
+        raise ValueError("")
+    if signal.size < window:
+        raise ValueError("Input vector needs to be bigger than window size.")
+    if window < 3:
+        return signal
+    s = np.r_[2 * signal[0] - signal[window - 1::-1],
+              signal, 2 * signal[-1] - signal[-1:-window:-1]]
+    w = np.ones(window, 'd')
+    y = np.convolve(w / w.sum(), s, mode='same')
+
+    return y[window:-window + 1]
+
+def silence_removal(signal, sampling_rate, st_win, st_step,smooth_window=0.5,weight=0.5):
     if weight >= 1:
         weight = 0.99
     if weight <= 0:
@@ -81,7 +97,7 @@ def silence_removal(signal, sampling_rate, st_win, st_step,weight=0.5):
     prob_on_set = np.array(prob_on_set)
 
     # smooth probability:
-    #prob_on_set = smooth_moving_avg(prob_on_set, smooth_window / st_step)
+    prob_on_set = smooth_moving_avg(prob_on_set, smooth_window / st_step)
 
     # Step 4A: detect onset frame indices:
     prog_on_set_sort = np.sort(prob_on_set)
@@ -131,12 +147,12 @@ def sortAudioFiles(data):
     return sorted(data, key=alphanum_key)
 
 
-def splitAudio(input_file,audio_directory, weight=0.2):
+def splitAudio(input_file,audio_directory,smoothing_window=1.0, weight=0.2):
     if not os.path.isfile(input_file):
         raise Exception("Input audio file not found!")
 
     [fs, x] = read_audio_file(input_file)
-    segmentLimits = silence_removal(x, fs, 0.05, 0.05, weight)
+    segmentLimits = silence_removal(x, fs, 0.05, 0.05, smoothing_window,weight)
 
     for i, s in enumerate(segmentLimits):
         strOut = "{0:s}_{1:.3f}-{2:.3f}.wav".format(input_file[0:-4], s[0], s[1])
