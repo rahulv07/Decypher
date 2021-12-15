@@ -4,7 +4,7 @@ import os
 import split
 import decipher
 import datetime
-
+from tqdm import tqdm
 
 parser = argparse.ArgumentParser()
 parser.add_argument("path",help = "Enter the video file path")
@@ -51,12 +51,14 @@ print("Transcribing the audio...")
 
 subtitle = open(f"{video_prefix}.srt","a")
 
-for i,file in enumerate(audiofiles):
+for i in enumerate(tqdm(audiofiles)):
+    count = i[0]
+    file = i[1]
     file = os.path.join(audio_directory,file)
     interval = file.split(os.sep)[-1][:-4].split("_")[-1].split("-")
     fromTime = decipher.get_timestamp_string(datetime.timedelta(seconds=float(interval[0])))
     toTime = decipher.get_timestamp_string(datetime.timedelta(seconds=float(interval[1])))
-    subtitle.write(str(i+1)+"\n")
+    subtitle.write(str(count+1)+"\n")
     subtitle.write(fromTime+" --> "+toTime+"\n")
     subtitle.write(decipher.transcribe(file)+"\n\n")
 

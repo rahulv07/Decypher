@@ -2,9 +2,21 @@ from vosk import Model, KaldiRecognizer, SetLogLevel
 import os
 import wave
 import json
+from contextlib import contextmanager
+import sys
 
-SetLogLevel(0)
+SetLogLevel(-1)
 
+@contextmanager
+def suppress_stdout():
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        sys.stdout = devnull
+        try:  
+            yield
+        finally:
+            sys.stdout = old_stdout
+            
 def isModelPresent():
     if not os.path.exists("model"):
         print ("Please download the model from https://alphacephei.com/vosk/models and unpack as 'model' in the current folder.")
@@ -26,14 +38,16 @@ def transcribe(audioPath):
         print ("Audio file must be WAV format mono PCM.")
         exit (1)
 
-    model = Model("model")
-    rec = KaldiRecognizer(model, wf.getframerate())
-    rec.SetWords(True)
+    with suppress_stdout():
+        model = Model("model")
+        rec = KaldiRecognizer(model, wf.getframerate())
+        rec.SetWords(True)
 
-    nFrames = wf.getnframes()
-    data = wf.readframes(nFrames)
-    a = rec.AcceptWaveform(data)
-    ans = rec.FinalResult()
+        nFrames = wf.getnframes()
+        data = wf.readframes(nFrames)
+        a = rec.AcceptWaveform(data)
+        ans = rec.FinalResult()
+        
     ansDict = json.loads(ans)
     return ansDict["text"]
 
