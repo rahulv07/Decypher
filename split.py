@@ -151,6 +151,7 @@ def splitAudio(input_file,audio_directory,smoothing_window=1.0, weight=0.2):
     if not os.path.isfile(input_file):
         raise Exception("Input audio file not found!")
 
+    
     [fs, x] = read_audio_file(input_file)
     segmentLimits = silence_removal(x, fs, 0.05, 0.05, smoothing_window,weight)
 
@@ -160,4 +161,3 @@ def splitAudio(input_file,audio_directory,smoothing_window=1.0, weight=0.2):
         
     audiofiles=sortAudioFiles(os.listdir(audio_directory))
     return audiofiles
-

@@ -10,16 +10,22 @@ parser = argparse.ArgumentParser()
 parser.add_argument("path",help = "Enter the video file path")
 args = parser.parse_args()
 
-video_file_name = args.path
-
+videoPath= args.path
+    
 base_directory = os.getcwd()
 output_directory = os.path.join(base_directory, "output")
 audio_directory = os.path.join(base_directory, "audio")
-video_prefix = os.path.splitext(os.path.basename(video_file_name))[0]
+video_prefix = os.path.splitext(os.path.basename(videoPath))[0]
 audio_file_name = os.path.join(audio_directory, video_prefix + ".wav")
 
+if not os.path.isfile(videoPath):
+    raise Exception("Video file does not exist")
+
+if not os.path.isdir(audio_directory):
+    os.makedirs(audio_directory)
+
 print("Extracting the audio...")
-filter.extractAudio(video_file_name,audio_file_name)
+filter.extractAudio(videoPath,audio_file_name)
 
 print("Processing the audio...")
 filter.preProcess(audio_file_name)
@@ -43,7 +49,7 @@ decipher.isModelPresent()
 #Transcribing
 print("Transcribing the audio...")
 
-subtitle = open(f"{video_file_name}.srt","a")
+subtitle = open(f"{video_prefix}.srt","a")
 
 for i,file in enumerate(audiofiles):
     file = os.path.join(audio_directory,file)

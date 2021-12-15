@@ -82,8 +82,3 @@ def preProcess(audioName):
     bandPassFiltering()
     removeStaticNoise()
     amplifyAudio(audioName)
-    
-    
-    
-    
-# Hello upendra. How are u doing. I am in cbe
