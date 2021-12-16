@@ -1,7 +1,7 @@
-# NoobLate :clapper:
+# Decypher :clapper:
 
 ## Description:
-NoobLate is a subtitle file generator for videos. It is made using **Python** and **VOSK**, an open source speech recognition engine.
+Decypher is a subtitle file generator for videos. It is made using **Python** and **VOSK**, an open source speech recognition engine.
 
 ## How to use:
 1. Clone this repository or download the zip folder and extract the files into your system.
